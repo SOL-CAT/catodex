@@ -1,19 +1,20 @@
 {
   "files": {
     "main.css": "/static/css/main.63523f0d.chunk.css",
-    "main.js": "/static/js/main.354d7c75.chunk.js",
-    "main.js.map": "/static/js/main.354d7c75.chunk.js.map",
+    "main.js": "/static/js/main.52c1ef6c.chunk.js",
+    "main.js.map": "/static/js/main.52c1ef6c.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.c7319a82.js",
     "runtime-main.js.map": "/static/js/runtime-main.c7319a82.js.map",
     "static/css/2.06ebec9a.chunk.css": "/static/css/2.06ebec9a.chunk.css",
-    "static/js/2.3968a255.chunk.js": "/static/js/2.3968a255.chunk.js",
-    "static/js/2.3968a255.chunk.js.map": "/static/js/2.3968a255.chunk.js.map",
+    "static/js/2.5e99f15d.chunk.js": "/static/js/2.5e99f15d.chunk.js",
+    "static/js/2.5e99f15d.chunk.js.map": "/static/js/2.5e99f15d.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.e165537fd3e73839d65de08df4d0cc7f.js": "/precache-manifest.e165537fd3e73839d65de08df4d0cc7f.js",
+    "precache-manifest.a7a20f28b7e693f04514b7a96faa0994.js": "/precache-manifest.a7a20f28b7e693f04514b7a96faa0994.js",
     "service-worker.js": "/service-worker.js",
     "static/css/2.06ebec9a.chunk.css.map": "/static/css/2.06ebec9a.chunk.css.map",
     "static/css/main.63523f0d.chunk.css.map": "/static/css/main.63523f0d.chunk.css.map",
-    "static/js/2.3968a255.chunk.js.LICENSE.txt": "/static/js/2.3968a255.chunk.js.LICENSE.txt",
+    "static/js/2.5e99f15d.chunk.js.LICENSE.txt": "/static/js/2.5e99f15d.chunk.js.LICENSE.txt",
+    "static/media/BOLE.png": "/static/media/BOLE.def201b1.png",
     "static/media/BOP.png": "/static/media/BOP.360b8c67.png",
     "static/media/BTC.png": "/static/media/BTC.d6a21bc3.png",
     "static/media/CATO.jpg": "/static/media/CATO.174ce64b.jpg",
@@ -51,6 +52,7 @@
     "static/media/SAMO.png": "/static/media/SAMO.297fa2f8.png",
     "static/media/SDOGE.jpg": "/static/media/SDOGE.fb8fa267.jpg",
     "static/media/SLNDN.png": "/static/media/SLNDN.4e9e0477.png",
+    "static/media/SNOWSHOE.png": "/static/media/SNOWSHOE.428b3e9d.png",
     "static/media/SOL.png": "/static/media/SOL.e65876d0.png",
     "static/media/SOLAPE.png": "/static/media/SOLAPE.b8120d10.png",
     "static/media/STNK.png": "/static/media/STNK.f89e2002.png",
@@ -63,8 +65,8 @@
   "entrypoints": [
     "static/js/runtime-main.c7319a82.js",
     "static/css/2.06ebec9a.chunk.css",
-    "static/js/2.3968a255.chunk.js",
+    "static/js/2.5e99f15d.chunk.js",
     "static/css/main.63523f0d.chunk.css",
-    "static/js/main.354d7c75.chunk.js"
+    "static/js/main.52c1ef6c.chunk.js"
   ]
 }
