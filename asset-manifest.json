@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.2cd25710.chunk.css",
-    "main.js": "/static/js/main.0b3f8db7.chunk.js",
-    "main.js.map": "/static/js/main.0b3f8db7.chunk.js.map",
+    "main.css": "/static/css/main.eb1c6168.chunk.css",
+    "main.js": "/static/js/main.cb0bcf26.chunk.js",
+    "main.js.map": "/static/js/main.cb0bcf26.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.c7319a82.js",
     "runtime-main.js.map": "/static/js/runtime-main.c7319a82.js.map",
     "static/css/2.06ebec9a.chunk.css": "/static/css/2.06ebec9a.chunk.css",
-    "static/js/2.f57eafbc.chunk.js": "/static/js/2.f57eafbc.chunk.js",
-    "static/js/2.f57eafbc.chunk.js.map": "/static/js/2.f57eafbc.chunk.js.map",
+    "static/js/2.ba974fe8.chunk.js": "/static/js/2.ba974fe8.chunk.js",
+    "static/js/2.ba974fe8.chunk.js.map": "/static/js/2.ba974fe8.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.baef5a5c12e237d15ff873a50848334c.js": "/precache-manifest.baef5a5c12e237d15ff873a50848334c.js",
+    "precache-manifest.5b401ed88ff1e2ab154640354147a07d.js": "/precache-manifest.5b401ed88ff1e2ab154640354147a07d.js",
     "service-worker.js": "/service-worker.js",
     "static/css/2.06ebec9a.chunk.css.map": "/static/css/2.06ebec9a.chunk.css.map",
-    "static/css/main.2cd25710.chunk.css.map": "/static/css/main.2cd25710.chunk.css.map",
-    "static/js/2.f57eafbc.chunk.js.LICENSE.txt": "/static/js/2.f57eafbc.chunk.js.LICENSE.txt",
+    "static/css/main.eb1c6168.chunk.css.map": "/static/css/main.eb1c6168.chunk.css.map",
+    "static/js/2.ba974fe8.chunk.js.LICENSE.txt": "/static/js/2.ba974fe8.chunk.js.LICENSE.txt",
     "static/media/1.png": "/static/media/1.628c42c1.png",
     "static/media/APEX.png": "/static/media/APEX.7439105d.png",
     "static/media/BOLE.png": "/static/media/BOLE.def201b1.png",
@@ -26,7 +26,7 @@
     "static/media/DGX.png": "/static/media/DGX.1f573c7b.png",
     "static/media/DOGA.png": "/static/media/DOGA.9e4adcc9.png",
     "static/media/ETH.png": "/static/media/ETH.a9b2b058.png",
-    "static/media/FAB.svg": "/static/media/FAB.01620a9d.svg",
+    "static/media/FAB.svg": "/static/media/FAB.7ddcc4f3.svg",
     "static/media/FEFE.jpg": "/static/media/FEFE.7f92797d.jpg",
     "static/media/FIDA.svg": "/static/media/FIDA.ce20eedf.svg",
     "static/media/FRONT.png": "/static/media/FRONT.7eae1b24.png",
@@ -76,8 +76,8 @@
   "entrypoints": [
     "static/js/runtime-main.c7319a82.js",
     "static/css/2.06ebec9a.chunk.css",
-    "static/js/2.f57eafbc.chunk.js",
-    "static/css/main.2cd25710.chunk.css",
-    "static/js/main.0b3f8db7.chunk.js"
+    "static/js/2.ba974fe8.chunk.js",
+    "static/css/main.eb1c6168.chunk.css",
+    "static/js/main.cb0bcf26.chunk.js"
   ]
 }
