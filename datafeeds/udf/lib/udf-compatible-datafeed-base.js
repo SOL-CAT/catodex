@@ -76,13 +76,6 @@ var UDFCompatibleDatafeedBase = /** @class */ (function () {
   ) {
     this._quotesPulseProvider.unsubscribeQuotes(listenerGuid);
   };
-  UDFCompatibleDatafeedBase.prototype.calculateHistoryDepth = function (
-    resolution,
-    resolutionBack,
-    intervalBack,
-  ) {
-    return undefined;
-  };
   UDFCompatibleDatafeedBase.prototype.getMarks = function (
     symbolInfo,
     from,
@@ -287,13 +280,12 @@ var UDFCompatibleDatafeedBase = /** @class */ (function () {
   UDFCompatibleDatafeedBase.prototype.getBars = function (
     symbolInfo,
     resolution,
-    rangeStartDate,
-    rangeEndDate,
+    periodParams,
     onResult,
     onError,
   ) {
     this._historyProvider
-      .getBars(symbolInfo, resolution, rangeStartDate, rangeEndDate)
+      .getBars(symbolInfo, resolution, periodParams)
       .then(function (result) {
         onResult(result.bars, result.meta);
       })

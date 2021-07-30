@@ -3,7 +3,12 @@
     ? t(exports)
     : 'function' == typeof define && define.amd
     ? define(['exports'], t)
-    : t((e.Datafeeds = {}));
+    : t(
+        ((e =
+          'undefined' != typeof globalThis
+            ? globalThis
+            : e || self).Datafeeds = {}),
+      );
 })(this, function (e) {
   'use strict';
   var r = function (e, t) {
@@ -14,30 +19,23 @@
           e.__proto__ = t;
         }) ||
       function (e, t) {
-        for (var r in t) t.hasOwnProperty(r) && (e[r] = t[r]);
+        for (var r in t)
+          Object.prototype.hasOwnProperty.call(t, r) && (e[r] = t[r]);
       })(e, t);
   };
-  var s = !1;
   function n(e) {
-    var t;
-    s &&
-      ((t = new Date()),
-      console.log(
-        t.toLocaleTimeString() + '.' + t.getMilliseconds() + '> ' + e,
-      ));
-  }
-  function c(e) {
     return void 0 === e ? '' : 'string' == typeof e ? e : e.message;
   }
   var i =
-    ((t.prototype.getBars = function (e, t, r, s) {
-      var o = this,
-        i = { symbol: e.ticker || '', resolution: t, from: r, to: s };
+    ((t.prototype.getBars = function (e, t, r) {
+      var s = this,
+        o = { symbol: e.ticker || '', resolution: t, from: r.from, to: r.to };
       return (
-        void 0 !== e.currency_code && (i.currencyCode = e.currency_code),
+        void 0 !== r.countBack && (o.countback = r.countBack),
+        void 0 !== e.currency_code && (o.currencyCode = e.currency_code),
         new Promise(function (a, u) {
-          o._requester
-            .sendRequest(o._datafeedUrl, 'history', i)
+          s._requester
+            .sendRequest(s._datafeedUrl, 'history', o)
             .then(function (e) {
               if ('ok' === e.s || 'no_data' === e.s) {
                 var t = [],
@@ -46,29 +44,29 @@
                   (r.noData = !0), (r.nextTime = e.nextTime);
                 else
                   for (
-                    var s = void 0 !== e.v, o = void 0 !== e.o, i = 0;
-                    i < e.t.length;
-                    ++i
+                    var s = void 0 !== e.v, o = void 0 !== e.o, n = 0;
+                    n < e.t.length;
+                    ++n
                   ) {
-                    var n = {
-                      time: 1e3 * e.t[i],
-                      close: parseFloat(e.c[i]),
-                      open: parseFloat(e.c[i]),
-                      high: parseFloat(e.c[i]),
-                      low: parseFloat(e.c[i]),
+                    var i = {
+                      time: 1e3 * e.t[n],
+                      close: parseFloat(e.c[n]),
+                      open: parseFloat(e.c[n]),
+                      high: parseFloat(e.c[n]),
+                      low: parseFloat(e.c[n]),
                     };
                     o &&
-                      ((n.open = parseFloat(e.o[i])),
-                      (n.high = parseFloat(e.h[i])),
-                      (n.low = parseFloat(e.l[i]))),
-                      s && (n.volume = parseFloat(e.v[i])),
-                      t.push(n);
+                      ((i.open = parseFloat(e.o[n])),
+                      (i.high = parseFloat(e.h[n])),
+                      (i.low = parseFloat(e.l[n]))),
+                      s && (i.volume = parseFloat(e.v[n])),
+                      t.push(i);
                   }
                 a({ bars: t, meta: r });
               } else u(e.errmsg);
             })
             .catch(function (e) {
-              e = c(e);
+              e = n(e);
               console.warn('HistoryProvider: getBars() failed, error=' + e),
                 u(e);
             });
@@ -80,64 +78,40 @@
     (this._datafeedUrl = e), (this._requester = t);
   }
   var a =
-    ((o.prototype.subscribeBars = function (e, t, r, s) {
-      this._subscribers.hasOwnProperty(s)
-        ? n('DataPulseProvider: already has subscriber with id=' + s)
-        : ((this._subscribers[s] = {
-            lastBarTime: null,
-            listener: r,
-            resolution: t,
-            symbolInfo: e,
-          }),
-          n(
-            'DataPulseProvider: subscribed for #' +
-              s +
-              ' - {' +
-              e.name +
-              ', ' +
-              t +
-              '}',
-          ));
+    ((s.prototype.subscribeBars = function (e, t, r, s) {
+      this._subscribers.hasOwnProperty(s) ||
+        ((this._subscribers[s] = {
+          lastBarTime: null,
+          listener: r,
+          resolution: t,
+          symbolInfo: e,
+        }),
+        e.name);
     }),
-    (o.prototype.unsubscribeBars = function (e) {
-      delete this._subscribers[e],
-        n('DataPulseProvider: unsubscribed for #' + e);
+    (s.prototype.unsubscribeBars = function (e) {
+      delete this._subscribers[e];
     }),
-    (o.prototype._updateData = function () {
-      var r = this;
+    (s.prototype._updateData = function () {
+      var t = this;
       if (!(0 < this._requestsPending)) {
         this._requestsPending = 0;
         var e,
+          r,
           s = this;
         for (e in this._subscribers)
-          !(function (t) {
+          (r = e),
             (s._requestsPending += 1),
-              s
-                ._updateDataForSubscriber(t)
-                .then(function () {
-                  --r._requestsPending,
-                    n(
-                      'DataPulseProvider: data for #' +
-                        t +
-                        ' updated successfully, pending=' +
-                        r._requestsPending,
-                    );
-                })
-                .catch(function (e) {
-                  --r._requestsPending,
-                    n(
-                      'DataPulseProvider: data for #' +
-                        t +
-                        ' updated with error=' +
-                        c(e) +
-                        ', pending=' +
-                        r._requestsPending,
-                    );
-                });
-          })(e);
+            s
+              ._updateDataForSubscriber(r)
+              .then(function () {
+                --t._requestsPending, t._requestsPending;
+              })
+              .catch(function (e) {
+                --t._requestsPending, n(e), t._requestsPending;
+              });
       }
     }),
-    (o.prototype._updateDataForSubscriber = function (t) {
+    (s.prototype._updateDataForSubscriber = function (t) {
       var r = this,
         e = this._subscribers[t],
         s = parseInt((Date.now() / 1e3).toString()),
@@ -156,108 +130,88 @@
             return 24 * r * 60 * 60;
           })(e.resolution, 10);
       return this._historyProvider
-        .getBars(e.symbolInfo, e.resolution, o, s)
+        .getBars(e.symbolInfo, e.resolution, {
+          from: o,
+          to: s,
+          countBack: 2,
+          firstDataRequest: !1,
+        })
         .then(function (e) {
           r._onSubscriberDataReceived(t, e);
         });
     }),
-    (o.prototype._onSubscriberDataReceived = function (e, t) {
+    (s.prototype._onSubscriberDataReceived = function (e, t) {
       if (this._subscribers.hasOwnProperty(e)) {
         var r = t.bars;
         if (0 !== r.length) {
-          var s = r[r.length - 1],
-            t = this._subscribers[e];
-          if (!(null !== t.lastBarTime && s.time < t.lastBarTime)) {
-            if (null !== t.lastBarTime && s.time > t.lastBarTime) {
+          (t = r[r.length - 1]), (e = this._subscribers[e]);
+          if (!(null !== e.lastBarTime && t.time < e.lastBarTime)) {
+            if (null !== e.lastBarTime && t.time > e.lastBarTime) {
               if (r.length < 2)
                 throw new Error(
                   'Not enough bars in history for proper pulse update. Need at least 2.',
                 );
               r = r[r.length - 2];
-              t.listener(r);
+              e.listener(r);
             }
-            (t.lastBarTime = s.time), t.listener(s);
+            (e.lastBarTime = t.time), e.listener(t);
           }
         }
-      } else
-        n(
-          'DataPulseProvider: Data comes for already unsubscribed subscription #' +
-            e,
-        );
+      }
     }),
-    o);
-  function o(e, t) {
+    s);
+  function s(e, t) {
     (this._subscribers = {}),
       (this._requestsPending = 0),
       (this._historyProvider = e),
       setInterval(this._updateData.bind(this), t);
   }
   var u =
-    ((l.prototype.subscribeQuotes = function (e, t, r, s) {
-      (this._subscribers[s] = { symbols: e, fastSymbols: t, listener: r }),
-        n('QuotesPulseProvider: subscribed quotes with #' + s);
+    ((o.prototype.subscribeQuotes = function (e, t, r, s) {
+      this._subscribers[s] = { symbols: e, fastSymbols: t, listener: r };
     }),
-    (l.prototype.unsubscribeQuotes = function (e) {
-      delete this._subscribers[e],
-        n('QuotesPulseProvider: unsubscribed quotes with #' + e);
+    (o.prototype.unsubscribeQuotes = function (e) {
+      delete this._subscribers[e];
     }),
-    (l.prototype._updateQuotes = function (s) {
-      var o = this;
+    (o.prototype._updateQuotes = function (e) {
+      var s = this;
       if (!(0 < this._requestsPending)) {
-        var e,
-          i = this;
-        for (e in this._subscribers)
+        var t,
+          o = this;
+        for (t in this._subscribers)
           !(function (t) {
-            i._requestsPending++;
-            var r = i._subscribers[t];
-            i._quotesProvider
-              .getQuotes(1 === s ? r.fastSymbols : r.symbols)
+            o._requestsPending++;
+            var r = o._subscribers[t];
+            o._quotesProvider
+              .getQuotes(1 === e ? r.fastSymbols : r.symbols)
               .then(function (e) {
-                o._requestsPending--,
-                  o._subscribers.hasOwnProperty(t) &&
-                    (r.listener(e),
-                    n(
-                      'QuotesPulseProvider: data for #' +
-                        t +
-                        ' (' +
-                        s +
-                        ') updated successfully, pending=' +
-                        o._requestsPending,
-                    ));
+                s._requestsPending--,
+                  s._subscribers.hasOwnProperty(t) &&
+                    (r.listener(e), s._requestsPending);
               })
               .catch(function (e) {
-                o._requestsPending--,
-                  n(
-                    'QuotesPulseProvider: data for #' +
-                      t +
-                      ' (' +
-                      s +
-                      ') updated with error=' +
-                      c(e) +
-                      ', pending=' +
-                      o._requestsPending,
-                  );
+                s._requestsPending--, n(e), s._requestsPending;
               });
-          })(e);
+          })(t);
       }
     }),
-    l);
-  function l(e) {
+    o);
+  function o(e) {
     (this._subscribers = {}),
       (this._requestsPending = 0),
       (this._quotesProvider = e),
       setInterval(this._updateQuotes.bind(this, 1), 1e4),
       setInterval(this._updateQuotes.bind(this, 0), 6e4);
   }
-  function h(e, t, r, s) {
+  function p(e, t, r, s) {
     t = e[t];
     return !Array.isArray(t) || (s && !Array.isArray(t[0])) ? t : t[r];
   }
   function f(e, t) {
     return e + (void 0 !== t ? '_%|#|%_' + t : '');
   }
-  var d =
-    ((p.prototype.resolveSymbol = function (t, r) {
+  var c =
+    ((h.prototype.resolveSymbol = function (t, r) {
       var s = this;
       return this._readyPromise.then(function () {
         var e = s._symbolsInfo[f(t, r)];
@@ -266,27 +220,25 @@
           : Promise.resolve(e);
       });
     }),
-    (p.prototype.searchSymbols = function (i, n, a, u) {
+    (h.prototype.searchSymbols = function (n, i, a, u) {
       var c = this;
       return this._readyPromise.then(function () {
         var s = [],
-          o = 0 === i.length;
-        i = i.toUpperCase();
+          o = 0 === n.length;
+        n = n.toUpperCase();
         for (var e = 0, t = c._symbolsList; e < t.length; e++)
           !(function (e) {
-            var t,
-              r = c._symbolsInfo[e];
-            void 0 !== r &&
-              ((0 < a.length && r.type !== a) ||
-                (n && 0 < n.length && r.exchange !== n) ||
-                ((t = r.name.toUpperCase().indexOf(i)),
-                (e = r.description.toUpperCase().indexOf(i)),
-                (o || 0 <= t || 0 <= e) &&
-                  (s.some(function (e) {
-                    return e.symbolInfo === r;
-                  }) ||
-                    ((e = 0 <= t ? t : 8e3 + e),
-                    s.push({ symbolInfo: r, weight: e })))));
+            var t = c._symbolsInfo[e];
+            if (void 0 === t) return;
+            if (0 < a.length && t.type !== a) return;
+            if (i && 0 < i.length && t.exchange !== i) return;
+            var r = t.name.toUpperCase().indexOf(n),
+              e = t.description.toUpperCase().indexOf(n);
+            (o || 0 <= r || 0 <= e) &&
+              (s.some(function (e) {
+                return e.symbolInfo === t;
+              }) ||
+                s.push({ symbolInfo: t, weight: 0 <= r ? r : 8e3 + e }));
           })(t[e]);
         var r = s
           .sort(function (e, t) {
@@ -308,20 +260,20 @@
         return Promise.resolve(r);
       });
     }),
-    (p.prototype._init = function () {
+    (h.prototype._init = function () {
       for (
         var e = this, t = [], r = {}, s = 0, o = this._exchangesList;
         s < o.length;
         s++
       ) {
-        var i = o[s];
-        r[i] || ((r[i] = !0), t.push(this._requestExchangeData(i)));
+        var n = o[s];
+        r[n] || ((r[n] = !0), t.push(this._requestExchangeData(n)));
       }
       return Promise.all(t).then(function () {
-        e._symbolsList.sort(), n('SymbolsStorage: All exchanges data loaded');
+        e._symbolsList.sort();
       });
     }),
-    (p.prototype._requestExchangeData = function (s) {
+    (h.prototype._requestExchangeData = function (s) {
       var o = this;
       return new Promise(function (t, r) {
         o._requester
@@ -335,72 +287,64 @@
             t();
           })
           .catch(function (e) {
-            n(
-              "SymbolsStorage: Request data for exchange '" +
-                s +
-                "' failed, reason=" +
-                c(e),
-            ),
-              t();
+            n(e), t();
           });
       });
     }),
-    (p.prototype._onExchangeDataReceived = function (t, r) {
-      var e = this,
-        s = 0;
+    (h.prototype._onExchangeDataReceived = function (t, r) {
+      var s = 0;
       try {
-        for (var o = r.symbol.length, i = void 0 !== r.ticker; s < o; ++s) {
+        for (var e = r.symbol.length, o = void 0 !== r.ticker; s < e; ++s) {
           var n = r.symbol[s],
-            a = h(r, 'exchange-listed', s),
-            u = h(r, 'exchange-traded', s),
-            c = u + ':' + n,
-            l = h(r, 'currency-code', s),
-            d = i ? h(r, 'ticker', s) : n,
-            u = {
-              ticker: d,
+            i = p(r, 'exchange-listed', s),
+            a = p(r, 'exchange-traded', s),
+            u = a + ':' + n,
+            c = p(r, 'currency-code', s),
+            h = o ? p(r, 'ticker', s) : n,
+            l = {
+              ticker: h,
               name: n,
-              base_name: [a + ':' + n],
-              full_name: c,
-              listed_exchange: a,
-              exchange: u,
-              currency_code: l,
-              original_currency_code: h(r, 'original-currency-code', s),
-              description: h(r, 'description', s),
-              has_intraday: _(h(r, 'has-intraday', s), !1),
-              has_no_volume: _(h(r, 'has-no-volume', s), !1),
-              minmov: h(r, 'minmovement', s) || h(r, 'minmov', s) || 0,
-              minmove2: h(r, 'minmove2', s) || h(r, 'minmov2', s),
-              fractional: h(r, 'fractional', s),
-              pricescale: h(r, 'pricescale', s),
-              type: h(r, 'type', s),
-              session: h(r, 'session-regular', s),
-              timezone: h(r, 'timezone', s),
+              base_name: [i + ':' + n],
+              full_name: u,
+              listed_exchange: i,
+              exchange: a,
+              currency_code: c,
+              original_currency_code: p(r, 'original-currency-code', s),
+              description: p(r, 'description', s),
+              has_intraday: _(p(r, 'has-intraday', s), !1),
+              has_no_volume: _(p(r, 'has-no-volume', s), !1),
+              minmov: p(r, 'minmovement', s) || p(r, 'minmov', s) || 0,
+              minmove2: p(r, 'minmove2', s) || p(r, 'minmov2', s),
+              fractional: p(r, 'fractional', s),
+              pricescale: p(r, 'pricescale', s),
+              type: p(r, 'type', s),
+              session: p(r, 'session-regular', s),
+              timezone: p(r, 'timezone', s),
               supported_resolutions: _(
-                h(r, 'supported-resolutions', s, !0),
-                e._datafeedSupportedResolutions,
+                p(r, 'supported-resolutions', s, !0),
+                this._datafeedSupportedResolutions,
               ),
-              force_session_rebuild: h(r, 'force-session-rebuild', s),
-              has_daily: _(h(r, 'has-daily', s), !0),
-              intraday_multipliers: _(h(r, 'intraday-multipliers', s, !0), [
+              has_daily: _(p(r, 'has-daily', s), !0),
+              intraday_multipliers: _(p(r, 'intraday-multipliers', s, !0), [
                 '1',
                 '5',
                 '15',
                 '30',
                 '60',
               ]),
-              has_weekly_and_monthly: h(r, 'has-weekly-and-monthly', s),
-              has_empty_bars: h(r, 'has-empty-bars', s),
-              volume_precision: _(h(r, 'volume-precision', s), 0),
+              has_weekly_and_monthly: p(r, 'has-weekly-and-monthly', s),
+              has_empty_bars: p(r, 'has-empty-bars', s),
+              volume_precision: _(p(r, 'volume-precision', s), 0),
               format: 'price',
             };
-          (e._symbolsInfo[d] = u),
-            (e._symbolsInfo[n] = u),
-            (e._symbolsInfo[c] = u),
-            void 0 !== l &&
-              ((e._symbolsInfo[f(d, l)] = u),
-              (e._symbolsInfo[f(n, l)] = u),
-              (e._symbolsInfo[f(c, l)] = u)),
-            e._symbolsList.push(n);
+          (this._symbolsInfo[h] = l),
+            (this._symbolsInfo[n] = l),
+            (this._symbolsInfo[u] = l),
+            void 0 !== c &&
+              ((this._symbolsInfo[f(h, c)] = l),
+              (this._symbolsInfo[f(n, c)] = l),
+              (this._symbolsInfo[f(u, c)] = l)),
+            this._symbolsList.push(n);
         }
       } catch (e) {
         throw new Error(
@@ -415,8 +359,8 @@
         );
       }
     }),
-    p);
-  function p(e, t, r) {
+    h);
+  function h(e, t, r) {
     (this._exchangesList = ['NYSE', 'FOREX', 'AMEX']),
       (this._symbolsInfo = {}),
       (this._symbolsList = []),
@@ -431,28 +375,27 @@
   function _(e, t) {
     return void 0 !== e ? e : t;
   }
-  function m(e, t, r) {
+  function l(e, t, r) {
     t = e[t];
     return Array.isArray(t) ? t[r] : t;
   }
-  var b =
-    ((y.prototype.onReady = function (e) {
+  var d =
+    ((m.prototype.onReady = function (e) {
       var t = this;
       this._configurationReadyPromise.then(function () {
         e(t._configuration);
       });
     }),
-    (y.prototype.getQuotes = function (e, t, r) {
+    (m.prototype.getQuotes = function (e, t, r) {
       this._quotesProvider.getQuotes(e).then(t).catch(r);
     }),
-    (y.prototype.subscribeQuotes = function (e, t, r, s) {
+    (m.prototype.subscribeQuotes = function (e, t, r, s) {
       this._quotesPulseProvider.subscribeQuotes(e, t, r, s);
     }),
-    (y.prototype.unsubscribeQuotes = function (e) {
+    (m.prototype.unsubscribeQuotes = function (e) {
       this._quotesPulseProvider.unsubscribeQuotes(e);
     }),
-    (y.prototype.calculateHistoryDepth = function (e, t, r) {}),
-    (y.prototype.getMarks = function (e, t, r, s, o) {
+    (m.prototype.getMarks = function (e, t, r, s, o) {
       this._configuration.supports_marks &&
         ((o = { symbol: e.ticker || '', from: t, to: r, resolution: o }),
         this._send('marks', o)
@@ -460,23 +403,23 @@
             if (!Array.isArray(e)) {
               for (var t = [], r = 0; r < e.id.length; ++r)
                 t.push({
-                  id: m(e, 'id', r),
-                  time: m(e, 'time', r),
-                  color: m(e, 'color', r),
-                  text: m(e, 'text', r),
-                  label: m(e, 'label', r),
-                  labelFontColor: m(e, 'labelFontColor', r),
-                  minSize: m(e, 'minSize', r),
+                  id: l(e, 'id', r),
+                  time: l(e, 'time', r),
+                  color: l(e, 'color', r),
+                  text: l(e, 'text', r),
+                  label: l(e, 'label', r),
+                  labelFontColor: l(e, 'labelFontColor', r),
+                  minSize: l(e, 'minSize', r),
                 });
               e = t;
             }
             s(e);
           })
           .catch(function (e) {
-            n('UdfCompatibleDatafeed: Request marks failed: ' + c(e)), s([]);
+            n(e), s([]);
           }));
     }),
-    (y.prototype.getTimescaleMarks = function (e, t, r, s, o) {
+    (m.prototype.getTimescaleMarks = function (e, t, r, s, o) {
       this._configuration.supports_timescale_marks &&
         ((o = { symbol: e.ticker || '', from: t, to: r, resolution: o }),
         this._send('timescale_marks', o)
@@ -484,22 +427,21 @@
             if (!Array.isArray(e)) {
               for (var t = [], r = 0; r < e.id.length; ++r)
                 t.push({
-                  id: m(e, 'id', r),
-                  time: m(e, 'time', r),
-                  color: m(e, 'color', r),
-                  label: m(e, 'label', r),
-                  tooltip: m(e, 'tooltip', r),
+                  id: l(e, 'id', r),
+                  time: l(e, 'time', r),
+                  color: l(e, 'color', r),
+                  label: l(e, 'label', r),
+                  tooltip: l(e, 'tooltip', r),
                 });
               e = t;
             }
             s(e);
           })
           .catch(function (e) {
-            n('UdfCompatibleDatafeed: Request timescale marks failed: ' + c(e)),
-              s([]);
+            n(e), s([]);
           }));
     }),
-    (y.prototype.getServerTime = function (t) {
+    (m.prototype.getServerTime = function (t) {
       this._configuration.supports_time &&
         this._send('time')
           .then(function (e) {
@@ -507,27 +449,18 @@
             isNaN(e) || t(e);
           })
           .catch(function (e) {
-            n('UdfCompatibleDatafeed: Fail to load server time, error=' + c(e));
+            n(e);
           });
     }),
-    (y.prototype.searchSymbols = function (t, e, r, s) {
+    (m.prototype.searchSymbols = function (e, t, r, s) {
       if (this._configuration.supports_search) {
-        var o = { limit: 30, query: t.toUpperCase(), type: r, exchange: e };
+        var o = { limit: 30, query: e.toUpperCase(), type: r, exchange: t };
         this._send('search', o)
           .then(function (e) {
-            return void 0 !== e.s
-              ? (n('UdfCompatibleDatafeed: search symbols error=' + e.errmsg),
-                void s([]))
-              : void s(e);
+            return void 0 !== e.s ? (e.errmsg, void s([])) : void s(e);
           })
           .catch(function (e) {
-            n(
-              "UdfCompatibleDatafeed: Search symbols for '" +
-                t +
-                "' failed. Error=" +
-                c(e),
-            ),
-              s([]);
+            n(e), s([]);
           });
       } else {
         if (null === this._symbolsStorage)
@@ -535,66 +468,57 @@
             'UdfCompatibleDatafeed: inconsistent configuration (symbols storage)',
           );
         this._symbolsStorage
-          .searchSymbols(t, e, r, 30)
+          .searchSymbols(e, t, r, 30)
           .then(s)
           .catch(s.bind(null, []));
       }
     }),
-    (y.prototype.resolveSymbol = function (e, t, r, s) {
-      n('Resolve requested');
-      var s = s && s.currencyCode,
-        o = Date.now();
-      function i(e) {
-        n('Symbol resolved: ' + (Date.now() - o) + 'ms'), t(e);
+    (m.prototype.resolveSymbol = function (e, t, r, s) {
+      s = s && s.currencyCode;
+      function o(e) {
+        t(e);
       }
       if (this._configuration.supports_group_request) {
         if (null === this._symbolsStorage)
           throw new Error(
             'UdfCompatibleDatafeed: inconsistent configuration (symbols storage)',
           );
-        this._symbolsStorage.resolveSymbol(e, s).then(i).catch(r);
+        this._symbolsStorage.resolveSymbol(e, s).then(o).catch(r);
       } else {
         e = { symbol: e };
         void 0 !== s && (e.currencyCode = s),
           this._send('symbols', e)
             .then(function (e) {
-              void 0 !== e.s ? r('unknown_symbol') : i(e);
+              void 0 !== e.s ? r('unknown_symbol') : o(e);
             })
             .catch(function (e) {
-              n('UdfCompatibleDatafeed: Error resolving symbol: ' + c(e)),
-                r('unknown_symbol');
+              n(e), r('unknown_symbol');
             });
       }
     }),
-    (y.prototype.getBars = function (e, t, r, s, o, i) {
+    (m.prototype.getBars = function (e, t, r, s, o) {
       this._historyProvider
-        .getBars(e, t, r, s)
+        .getBars(e, t, r)
         .then(function (e) {
-          o(e.bars, e.meta);
+          s(e.bars, e.meta);
         })
-        .catch(i);
+        .catch(o);
     }),
-    (y.prototype.subscribeBars = function (e, t, r, s, o) {
+    (m.prototype.subscribeBars = function (e, t, r, s, o) {
       this._dataPulseProvider.subscribeBars(e, t, r, s);
     }),
-    (y.prototype.unsubscribeBars = function (e) {
+    (m.prototype.unsubscribeBars = function (e) {
       this._dataPulseProvider.unsubscribeBars(e);
     }),
-    (y.prototype._requestConfiguration = function () {
+    (m.prototype._requestConfiguration = function () {
       return this._send('config').catch(function (e) {
-        return (
-          n(
-            'UdfCompatibleDatafeed: Cannot get datafeed configuration - use default, error=' +
-              c(e),
-          ),
-          null
-        );
+        return n(e), null;
       });
     }),
-    (y.prototype._send = function (e, t) {
+    (m.prototype._send = function (e, t) {
       return this._requester.sendRequest(this._datafeedURL, e, t);
     }),
-    (y.prototype._setupWithConfiguration = function (e) {
+    (m.prototype._setupWithConfiguration = function (e) {
       if (
         (void 0 === (this._configuration = e).exchanges && (e.exchanges = []),
         !e.supports_search && !e.supports_group_request)
@@ -603,18 +527,18 @@
           'Unsupported datafeed configuration. Must either support search, or support group request',
         );
       (!e.supports_group_request && e.supports_search) ||
-        (this._symbolsStorage = new d(
+        (this._symbolsStorage = new c(
           this._datafeedURL,
           e.supported_resolutions || [],
           this._requester,
         )),
-        n('UdfCompatibleDatafeed: Initialized with ' + JSON.stringify(e));
+        JSON.stringify(e);
     }),
-    y);
-  function y(e, t, r, s) {
+    m);
+  function m(e, t, r, s) {
     var o = this;
     void 0 === s && (s = 1e4),
-      (this._configuration = g()),
+      (this._configuration = y()),
       (this._symbolsStorage = null),
       (this._datafeedURL = e),
       (this._requester = r),
@@ -624,11 +548,11 @@
       (this._quotesPulseProvider = new u(this._quotesProvider)),
       (this._configurationReadyPromise = this._requestConfiguration().then(
         function (e) {
-          null === e && (e = g()), o._setupWithConfiguration(e);
+          null === e && (e = y()), o._setupWithConfiguration(e);
         },
       ));
   }
-  function g() {
+  function y() {
     return {
       supports_search: !1,
       supports_group_request: !0,
@@ -637,8 +561,8 @@
       supports_timescale_marks: !1,
     };
   }
-  var v =
-    ((P.prototype.getQuotes = function (e) {
+  var b =
+    ((g.prototype.getQuotes = function (e) {
       var s = this;
       return new Promise(function (t, r) {
         s._requester
@@ -647,18 +571,17 @@
             'ok' === e.s ? t(e.d) : r(e.errmsg);
           })
           .catch(function (e) {
-            e = c(e);
-            n('QuotesProvider: getQuotes failed, error=' + e),
-              r('network error: ' + e);
+            e = n(e);
+            r('network error: ' + e);
           });
       });
     }),
-    P);
-  function P(e, t) {
+    g);
+  function g(e, t) {
     (this._datafeedUrl = e), (this._requester = t);
   }
-  var q =
-    ((w.prototype.sendRequest = function (e, t, r) {
+  var v =
+    ((P.prototype.sendRequest = function (e, t, r) {
       void 0 !== r &&
         (0 !== (s = Object.keys(r)).length && (t += '?'),
         (t += s
@@ -667,8 +590,7 @@
               encodeURIComponent(e) + '=' + encodeURIComponent(r[e].toString())
             );
           })
-          .join('&'))),
-        n('New request: ' + t);
+          .join('&')));
       var s = { credentials: 'same-origin' };
       return (
         void 0 !== this._headers && (s.headers = this._headers),
@@ -681,27 +603,27 @@
           })
       );
     }),
-    w);
-  function w(e) {
+    P);
+  function P(e) {
     e && (this._headers = e);
   }
-  var D,
+  var q,
+    w,
     S,
-    x,
-    C =
-      (r((S = k), (x = D = b)),
-      (S.prototype =
-        null === x ? Object.create(x) : ((U.prototype = x.prototype), new U())),
-      k);
-  function U() {
-    this.constructor = S;
+    k =
+      (r((w = I), (S = q = d)),
+      (w.prototype =
+        null === S ? Object.create(S) : ((x.prototype = S.prototype), new x())),
+      I);
+  function x() {
+    this.constructor = w;
   }
-  function k(e, t) {
+  function I(e, t) {
     void 0 === t && (t = 1e4);
-    var r = new q(),
-      s = new v(e, r);
-    return D.call(this, e, s, r, t) || this;
+    var r = new v(),
+      s = new b(e, r);
+    return q.call(this, e, s, r, t) || this;
   }
-  (e.UDFCompatibleDatafeed = C),
+  (e.UDFCompatibleDatafeed = k),
     Object.defineProperty(e, '__esModule', { value: !0 });
 });

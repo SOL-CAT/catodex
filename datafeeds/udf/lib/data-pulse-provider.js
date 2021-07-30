@@ -85,12 +85,12 @@ var DataPulseProvider = /** @class */ (function () {
     var rangeStartTime =
       rangeEndTime - periodLengthSeconds(subscriptionRecord.resolution, 10);
     return this._historyProvider
-      .getBars(
-        subscriptionRecord.symbolInfo,
-        subscriptionRecord.resolution,
-        rangeStartTime,
-        rangeEndTime,
-      )
+      .getBars(subscriptionRecord.symbolInfo, subscriptionRecord.resolution, {
+        from: rangeStartTime,
+        to: rangeEndTime,
+        countBack: 2,
+        firstDataRequest: false,
+      })
       .then(function (result) {
         _this._onSubscriberDataReceived(listenerGuid, result);
       });

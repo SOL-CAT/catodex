@@ -204,11 +204,6 @@ var SymbolsStorage = /** @class */ (function () {
             extractField(data, 'supported-resolutions', symbolIndex, true),
             this._datafeedSupportedResolutions,
           ),
-          force_session_rebuild: extractField(
-            data,
-            'force-session-rebuild',
-            symbolIndex,
-          ),
           has_daily: definedValueOrDefault(
             extractField(data, 'has-daily', symbolIndex),
             true,

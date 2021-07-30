@@ -7,16 +7,18 @@ var HistoryProvider = /** @class */ (function () {
   HistoryProvider.prototype.getBars = function (
     symbolInfo,
     resolution,
-    rangeStartDate,
-    rangeEndDate,
+    periodParams,
   ) {
     var _this = this;
     var requestParams = {
       symbol: symbolInfo.ticker || '',
       resolution: resolution,
-      from: rangeStartDate,
-      to: rangeEndDate,
+      from: periodParams.from,
+      to: periodParams.to,
     };
+    if (periodParams.countBack !== undefined) {
+      requestParams.countback = periodParams.countBack;
+    }
     if (symbolInfo.currency_code !== undefined) {
       requestParams.currencyCode = symbolInfo.currency_code;
     }
