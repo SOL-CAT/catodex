@@ -3,6 +3,7 @@ import {
 	ErrorCallback,
 	GetMarksCallback,
 	HistoryCallback,
+	HistoryDepth,
 	IDatafeedChartApi,
 	IDatafeedQuotesApi,
 	IExternalDatafeed,
@@ -10,6 +11,7 @@ import {
 	Mark,
 	OnReadyCallback,
 	QuotesCallback,
+	ResolutionBackValues,
 	ResolutionString,
 	ResolveCallback,
 	SearchSymbolResultItem,
@@ -30,7 +32,6 @@ import {
 import {
 	GetBarsResult,
 	HistoryProvider,
-	PeriodParamsWithOptionalCountback,
 } from './history-provider';
 
 import { IQuotesProvider } from './iquotes-provider';
@@ -70,7 +71,7 @@ type UdfDatafeedTimescaleMark = UdfDatafeedMarkType<TimescaleMark>;
 
 function extractField<Field extends keyof Mark>(data: UdfDatafeedMark, field: Field, arrayIndex: number): Mark[Field];
 function extractField<Field extends keyof TimescaleMark>(data: UdfDatafeedTimescaleMark, field: Field, arrayIndex: number): TimescaleMark[Field];
-function extractField<Field extends keyof(TimescaleMark | Mark)>(data: UdfDatafeedMark | UdfDatafeedTimescaleMark, field: Field, arrayIndex: number): (TimescaleMark | Mark)[Field] {
+function extractField<Field extends keyof (TimescaleMark | Mark)>(data: UdfDatafeedMark | UdfDatafeedTimescaleMark, field: Field, arrayIndex: number): (TimescaleMark | Mark)[Field] {
 	const value = data[field];
 	return Array.isArray(value) ? value[arrayIndex] : value;
 }
@@ -129,6 +130,10 @@ export class UDFCompatibleDatafeedBase implements IExternalDatafeed, IDatafeedQu
 
 	public unsubscribeQuotes(listenerGuid: string): void {
 		this._quotesPulseProvider.unsubscribeQuotes(listenerGuid);
+	}
+
+	public calculateHistoryDepth(resolution: ResolutionString, resolutionBack: ResolutionBackValues, intervalBack: number): HistoryDepth | undefined {
+		return undefined;
 	}
 
 	public getMarks(symbolInfo: LibrarySymbolInfo, from: number, to: number, onDataCallback: GetMarksCallback<Mark>, resolution: ResolutionString): void {
@@ -298,8 +303,8 @@ export class UDFCompatibleDatafeedBase implements IExternalDatafeed, IDatafeedQu
 		}
 	}
 
-	public getBars(symbolInfo: LibrarySymbolInfo, resolution: ResolutionString, periodParams: PeriodParamsWithOptionalCountback, onResult: HistoryCallback, onError: ErrorCallback): void {
-		this._historyProvider.getBars(symbolInfo, resolution, periodParams)
+	public getBars(symbolInfo: LibrarySymbolInfo, resolution: ResolutionString, rangeStartDate: number, rangeEndDate: number, onResult: HistoryCallback, onError: ErrorCallback): void {
+		this._historyProvider.getBars(symbolInfo, resolution, rangeStartDate, rangeEndDate)
 			.then((result: GetBarsResult) => {
 				onResult(result.bars, result.meta);
 			})
